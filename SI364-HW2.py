@@ -9,18 +9,37 @@
 
 ## Edit the following Flask application code so that if you run the application locally and got to the URL http://localhost:5000/question, you see a form that asks you to enter your favorite number. Once you enter a number and submit it to the form, you should then see a web page that says "Double your favorite number is <number>". For example, if you enter 2 into the form, you should then see a page that says "Double your favorite number is 4". Careful about types in your Python code!
 ## You can assume a user will always enter a number only.
+import requests
 
-from flask import Flask
+from flask import Flask, request 
 app = Flask(__name__)
 app.debug = True
 
-@app.route('/')
-def hello_to_you():
-    return 'Hello!'
+@app.route('/question')
+def enter_data():
+    s = """<!DOCTYPE html>
+<html>
+<body>
+
+<form action="http://localhost:5000/result" method = "GET">
+  Enter your favorite number:<br>
+  <input type="text" name="favnumber">
+  <br>
+  <input type="submit" value="Submit">
+</form> 
+
+</body>
+</html>""" 
+    return s
+
+@app.route('/result', methods=["GET"])
+def double_result():
+	if request.method == "GET":
+		result = request.args
+		number = int(result['favnumber'])*2
+		return 'Double your favorite number is' + " " + str(number) + '!'
 
 
-if __name__ == '__main__':
-    app.run()
 
 
 ## [PROBLEM 2]
@@ -34,6 +53,34 @@ if __name__ == '__main__':
 
 # You can assume that a user will give you the type of input/response you expect in your form; you do not need to handle errors or user confusion. (e.g. if your form asks for a name, you can assume a user will type a reasonable name; if your form asks for a number, you can assume a user will type a reasonable number; if your form asks the user to select a checkbox, you can assume they will do that.)
 
+@app.route('/snack')
+def enter_tvdata():
+	s = """<!DOCTYPE html>
+<html>
+<body>
+
+<form action="http://localhost:5000/answer" method = "GET">
+  Are you sweet or salty?<br>
+  <br>
+  <input type="radio" name="favsnack" value="chocolate"> Chocolate<br>
+  <input type="radio" name="favsnack" value="pretzels"> Pretzels<br>
+  <input type="submit" value="Submit"> <br>
+  <br>
+</form> 
+
+</body>
+</html>""" 
+	return s
+
+@app.route('/answer', methods=["GET"])
+def snack_result():
+	if request.method == "GET":
+		food_result = request.args
+		food = food_result['favsnack']
+		return 'You love' + " " + food + '!'
+
+if __name__ == '__main__':
+    app.run()
 
 
 
